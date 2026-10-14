@@ -283,6 +283,6 @@ export const footer = {
   disclaimer:
     "Coaching is general fitness and nutrition education for adults aged 18 and over. It is not medical advice, diagnosis, or treatment.",
   privacy:
-    "This site doesn't use cookies, analytics, or ad trackers. Bookings are handled by Cal.com under their own privacy policy.",
+    "This site doesn't use cookies or ad trackers. It counts visits anonymously with Vercel Web Analytics, which works without cookies. Bookings are handled by Cal.com under their own privacy policy.",
   calPrivacyUrl: "https://cal.com/privacy",
 };

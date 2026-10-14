@@ -1,12 +1,14 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { brand } from "@/content/site";
 
 type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "rel"> & { children: ReactNode };
 
-/** Every booking action goes through here so the Cal.com URL lives in one place. */
+/**
+ * Every booking action goes through /book, which counts the click and forwards to the Cal.com URL
+ * in src/content/site.ts (brand.bookingUrl).
+ */
 export function BookLink({ children, ...rest }: Props) {
   return (
-    <a href={brand.bookingUrl} target="_blank" rel="noopener" {...rest}>
+    <a href="/book" target="_blank" rel="noopener" {...rest}>
       {children}
     </a>
   );
