@@ -26,9 +26,9 @@ const body = localFont({
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
-const title = "R. Miller | Real Food, Fitness & 1-on-1 Coaching";
+const title = "R. Miller | 1-on-1 Fitness & Nutrition Coaching";
 const description =
-  "Simple nutrition, strength training, and habits that stick. Explore R. Miller's practical approach to real-food living and book a 1-on-1 coaching session.";
+  "Simple nutrition, strength training, and habits that stick. 1-on-1 Fitness & Nutrition Coaching with R. Miller: a 30-minute video call, $30, free rescheduling.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(brand.siteUrl),

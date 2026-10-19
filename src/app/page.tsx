@@ -1,16 +1,17 @@
 import { About } from "@/components/About";
 import { Approach } from "@/components/Approach";
-import { Booking } from "@/components/Booking";
 import { CheckIn } from "@/components/CheckIn";
 import { Coaching } from "@/components/Coaching";
-import { Content } from "@/components/Content";
+import { ConsentBanner } from "@/components/Consent";
 import { Faq } from "@/components/Faq";
 import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Problem } from "@/components/Problem";
+import { Proof } from "@/components/Proof";
 import { RevealObserver } from "@/components/RevealObserver";
+import { StickyBook } from "@/components/StickyBook";
 
 export default function Home() {
   return (
@@ -21,17 +22,18 @@ export default function Home() {
       <Header />
       <main id="main">
         <Hero />
+        <Proof />
         <Problem />
         <Approach />
         <CheckIn />
         <Coaching />
-        <Booking />
         <About />
-        <Content />
         <Faq />
         <FinalCta />
       </main>
       <Footer />
+      <StickyBook />
+      <ConsentBanner />
       <RevealObserver />
     </>
   );

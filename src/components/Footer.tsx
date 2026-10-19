@@ -1,5 +1,7 @@
 import { brand, footer } from "@/content/site";
+import { pixelEnabled } from "@/lib/tracking";
 import { BookLink } from "./BookLink";
+import { ConsentSettingsButton } from "./Consent";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -15,18 +17,17 @@ export function Footer() {
           <a href={brand.tiktokUrl} target="_blank" rel="noopener">
             TikTok {brand.handle}
           </a>
-          <BookLink>Book a session</BookLink>
+          <BookLink source="footer">Book a session</BookLink>
         </nav>
         <div className="footer__small">
           <p>{footer.disclaimer}</p>
-          <p>
-            {footer.privacy}{" "}
-            <a href={footer.calPrivacyUrl} target="_blank" rel="noopener">
-              Cal.com privacy policy
-            </a>
-          </p>
-          <p>
-            &copy; {year} {brand.name}
+          <p>{pixelEnabled ? footer.privacyWithPixel : footer.privacyNoPixel}</p>
+          <p className="footer__legal">
+            <a href="/privacy">Privacy</a>
+            <ConsentSettingsButton />
+            <span>
+              &copy; {year} {brand.name}
+            </span>
           </p>
         </div>
       </div>

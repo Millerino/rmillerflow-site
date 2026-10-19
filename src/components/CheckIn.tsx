@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { checkIn } from "@/content/site";
+import { BookLink } from "./BookLink";
 import { ArrowDown, Check } from "./icons";
 
 export function CheckIn() {
@@ -54,10 +55,13 @@ export function CheckIn() {
               <div key={current.id} className="tip">
                 <p className="tip__title">{current.title}</p>
                 <p className="tip__text">{current.tip}</p>
-                <a className="textlink" href="#coaching">
-                  {checkIn.followUp}
-                  <ArrowDown className="textlink__icon textlink__icon--down" width={18} height={18} />
-                </a>
+                <div className="tip__cta">
+                  <p className="tip__cta-lead">{checkIn.followUpLead}</p>
+                  <BookLink className="btn btn--beeswax btn--small" source={`quiz-${current.id}`}>
+                    {checkIn.followUpCta}
+                    <ArrowDown className="btn__icon btn__icon--down" width={16} height={16} />
+                  </BookLink>
+                </div>
               </div>
             ) : (
               <p className="tip__placeholder">{checkIn.placeholder}</p>

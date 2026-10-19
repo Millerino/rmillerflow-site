@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { brand, nav } from "@/content/site";
 import { BookLink } from "./BookLink";
-import { ArrowUpRight, Close, Menu } from "./icons";
+import { ArrowDown, Close, Menu } from "./icons";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -54,10 +54,10 @@ export function Header() {
         </nav>
 
         <div className="header__actions">
-          <BookLink className="btn btn--small btn--header">
+          <BookLink className="btn btn--small btn--header" source="header">
             <span className="header__book-long">Book a session</span>
             <span className="header__book-short">Book</span>
-            <ArrowUpRight className="btn__icon btn__icon--diag" width={16} height={16} />
+            <ArrowDown className="btn__icon btn__icon--down" width={16} height={16} />
           </BookLink>
           <button
             ref={buttonRef}

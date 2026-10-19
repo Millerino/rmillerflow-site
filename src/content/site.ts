@@ -1,6 +1,6 @@
 /**
- * Everything you might want to edit lives in this file: links, price, copy, FAQ and images.
- * Components read from here, so a change in one place updates the whole site.
+ * Everything you might want to edit lives in this file: links, price, copy, FAQ, images and the
+ * Meta Pixel ID. Components read from here, so a change in one place updates the whole site.
  */
 
 export type Img = { src: string; alt: string; width: number; height: number };
@@ -10,14 +10,17 @@ export const brand = {
   handle: "@rmillerflow",
   siteUrl: "https://rmillerflow-site.vercel.app",
   tiktokUrl: "https://www.tiktok.com/@rmillerflow",
-  /** Use this exact URL for every booking action. */
+  /** The Cal.com event. The calendar on the page and the fallback link both use it. */
   bookingUrl: "https://cal.com/rokas-miller-ovcrq8/30min",
+  /** Same event, written the way the Cal.com embed wants it (no domain). */
+  calLink: "rokas-miller-ovcrq8/30min",
   minimumAge: 18,
-  yearsExperience: "10+",
 };
 
 export const session = {
-  title: "1-on-1 Fitness & Nutrition Session",
+  /** Use this name everywhere: on the page, in ads and (ideally) as the Cal.com event title. */
+  name: "1-on-1 Fitness & Nutrition Coaching",
+  format: "1-on-1 video call",
   durationMinutes: 30,
   price: 30,
   currency: "USD",
@@ -27,36 +30,26 @@ export const session = {
    */
   previousPrice: null as number | null,
   rescheduleHours: 24,
+  trustLine: "30 min · $30 · free rescheduling",
+};
+
+/**
+ * Meta (Facebook/Instagram) Pixel. Paste the Pixel ID as a string, e.g. "123456789012345".
+ * While this is null, no pixel, no cookie banner and no Meta wording appear anywhere on the site.
+ */
+export const meta = {
+  pixelId: null as string | null,
 };
 
 export const images = {
   avatar: { src: "/images/avatar.jpg", alt: "R. Miller", width: 368, height: 368 } satisfies Img,
   /**
-   * Add a high-resolution portrait here (for example { src: "/images/portrait.jpg", ... }) and it
-   * replaces the small avatar in the About section.
+   * The large front-facing photo in the hero. Put the file in public/images/ (at least 900px wide,
+   * portrait orientation works best) and fill in its size, for example:
+   * { src: "/images/portrait.jpg", alt: "R. Miller", width: 1200, height: 1500 }
+   * Until then the hero uses the small avatar above.
    */
   portrait: null as Img | null,
-  boards: [
-    {
-      src: "/images/board-steak.jpg",
-      alt: "Wooden board with steak, berries, pineapple, eggs, raw honey, butter, watermelon and chicken",
-      width: 1080,
-      height: 810,
-    },
-    {
-      src: "/images/board-fish.jpg",
-      alt: "Wooden board with wild-caught fish, bone marrow, ghee, tallow, whole milk and avocado",
-      width: 1080,
-      height: 810,
-    },
-    {
-      src: "/images/board-organs.jpg",
-      alt: "Wooden board with raw heart and liver, Parmigiano Reggiano and homemade ice cream",
-      width: 1080,
-      height: 810,
-    },
-  ] satisfies Img[],
-  boardsCaption: "Real-food boards from my TikTok",
 };
 
 export const nav = [
@@ -67,13 +60,56 @@ export const nav = [
 ];
 
 export const hero = {
-  hello: "Hey, I'm R. Miller.",
+  hello: "Hey, I'm",
+  intro: "10+ years in nutrition, training and ancestral health.",
   titleLines: ["Real food.", "Strong body."],
   titleAccent: "A plan that fits your life.",
-  lede: "I help busy people simplify nutrition, get stronger, and build habits they can actually stick with, without making health their full-time job.",
-  primaryCta: { label: "See how I can help", href: "#approach" },
-  secondaryCta: "Book a 30-min session",
-  credibility: "10+ years exploring nutrition, training & ancestral health.",
+  sessionText: "A 30-minute video call where we build a simple plan around your life.",
+  primaryCta: "Book a session",
+  secondaryCta: { label: "See how I can help", href: "#approach" },
+};
+
+export const proof = {
+  title: "As seen on my TikTok",
+  intro: "Real food, simple swaps and everyday habits. This is the kind of thing I post.",
+  /**
+   * Real numbers only, copied from TikTok. Leave the list empty to hide the stats row.
+   * Example: { value: "449K", label: "views on my most-watched video" }
+   */
+  stats: [] as { value: string; label: string }[],
+  /** Shown under the stats, for example "Numbers from October 2026". */
+  statsNote: "",
+  images: [
+    {
+      src: "/images/board-steak.jpg",
+      alt: "Wooden board with steak, berries, pineapple, eggs, raw honey, butter, watermelon and chicken",
+      width: 1080,
+      height: 810,
+      caption: "Animal-based, with fruit",
+    },
+    {
+      src: "/images/board-fish.jpg",
+      alt: "Wooden board with wild-caught fish, bone marrow, ghee, tallow, whole milk and avocado",
+      width: 1080,
+      height: 810,
+      caption: "Fats and fish I cook with",
+    },
+    {
+      src: "/images/board-organs.jpg",
+      alt: "Wooden board with raw heart and liver, Parmigiano Reggiano and homemade ice cream",
+      width: 1080,
+      height: 810,
+      caption: "Organ meats and real treats",
+    },
+  ] as (Img & { caption: string })[],
+  cta: "Follow @rmillerflow on TikTok",
+  /**
+   * Testimonials stay hidden until this list has at least one entry. Only add real quotes from
+   * real clients, with their permission. Example:
+   * { quote: "...", name: "Anna", detail: "Oslo" }
+   */
+  testimonialsTitle: "What people say",
+  testimonials: [] as { quote: string; name: string; detail?: string }[],
 };
 
 export const problem = {
@@ -114,7 +150,8 @@ export const checkIn = {
   intro: "Pick the one that sounds most like you.",
   placeholder: "Pick one and a quick, practical tip shows up here.",
   disclaimer: "A general tip to get you started, not a personal assessment.",
-  followUp: "Want help with this? See how a session works",
+  followUpLead: "Want this tailored to you?",
+  followUpCta: "Book a session",
   options: [
     {
       id: "consistency",
@@ -143,13 +180,16 @@ export const checkIn = {
   ],
 };
 
+/** "How I help": coaching, what you leave with, price and the booking calendar, in one section. */
 export const coaching = {
   title: "Sometimes you just need a clear plan.",
   intro: "That's where I come in. In one focused 30-minute session, we'll look at where you are, what's been holding you back, and what makes sense for you moving forward.",
+  topicsTitle: "What we can work on",
+  topics: ["Nutrition", "Training", "Sleep", "Energy", "Digestion"],
   stages: [
     {
       title: "Where you're at",
-      text: "We talk about your current routine, eating habits, training, energy, and the things you've been struggling with.",
+      text: "We talk about your current routine, eating habits, training, sleep, energy, digestion, and the things you've been struggling with.",
     },
     {
       title: "Where you want to go",
@@ -160,7 +200,6 @@ export const coaching = {
       text: "We identify practical nutrition, training, and habit changes you can begin working on right away.",
     },
   ],
-  summary: ["30 minutes.", "A clearer direction.", "Practical next steps."],
   leaveTitle: "What you can expect to leave with",
   leaveWith: [
     { from: "Guessing what to eat", to: "Clear nutrition priorities based on real food" },
@@ -173,11 +212,13 @@ export const coaching = {
 };
 
 export const booking = {
-  title: "Ready to make things simpler?",
+  summary: ["30 minutes.", "A clearer direction.", "Practical next steps."],
   intro: "If you want a bit of guidance and a plan that actually makes sense for your life, let's figure it out together.",
   reassurance: "One focused session. No complicated commitment.",
-  cta: "Find a time that works",
-  afterCta: "Choose a time that suits you. Free rescheduling up to 24 hours before your session.",
+  calendarTitle: "Pick a time",
+  calendarLoading: "Loading available times",
+  calendarFallback: "Calendar not loading? Open it on Cal.com",
+  afterCta: "Free rescheduling up to 24 hours before your session.",
   age: "Sessions are for adults aged 18 and over.",
 };
 
@@ -191,43 +232,6 @@ export const about = {
     "That's what I share on TikTok, and it's what I help people work through one-on-one.",
   ],
   signoff: "No unnecessary complications. Just a better direction.",
-};
-
-export const content = {
-  title: "The little things add up.",
-  intro: "Real food, everyday habits, and practical ideas for living better.",
-  topics: [
-    {
-      id: "food",
-      icon: "plate",
-      title: "Real-food nutrition",
-      text: "Simple meals built from foods you actually enjoy, and why quality matters.",
-    },
-    {
-      id: "swaps",
-      icon: "swap",
-      title: "Food and kitchen swaps",
-      text: "Small, practical upgrades. Better defaults, no fear.",
-      swaps: [
-        ["Plastic", "Glass"],
-        ["Non-stick", "Cast iron"],
-        ["Ultra-processed", "Whole food"],
-      ],
-    },
-    {
-      id: "training",
-      icon: "dumbbell",
-      title: "Simple training",
-      text: "Strength work that fits a busy week, with no six-day split required.",
-    },
-    {
-      id: "habits",
-      icon: "repeat",
-      title: "Habits that stick",
-      text: "Small things you can repeat when life gets busy.",
-    },
-  ] as const,
-  cta: "More ideas on TikTok",
 };
 
 export const faq = {
@@ -255,7 +259,7 @@ export const faq = {
     },
     {
       q: "How does booking work?",
-      a: "Choose an available time through Cal.com, complete the booking, and follow the confirmation instructions.",
+      a: "Choose an available time in the calendar on this page (it runs on Cal.com), complete the booking, and follow the confirmation instructions.",
     },
     {
       q: "Can I reschedule?",
@@ -278,11 +282,30 @@ export const finalCta = {
   softLink: "Come hang out on TikTok.",
 };
 
+export const stickyCta = "Book a session · $30";
+
 export const footer = {
   statement: "Eat real food. Get stronger. Keep going.",
   disclaimer:
     "Coaching is general fitness and nutrition education for adults aged 18 and over. It is not medical advice, diagnosis, or treatment.",
-  privacy:
-    "This site doesn't use cookies or ad trackers. It counts visits anonymously with Vercel Web Analytics, which works without cookies. Bookings are handled by Cal.com under their own privacy policy.",
-  calPrivacyUrl: "https://cal.com/privacy",
+  privacyNoPixel:
+    "This site doesn't use cookies or ad trackers. It counts visits anonymously with Vercel Web Analytics, which works without cookies. Bookings are handled by Cal.com.",
+  privacyWithPixel:
+    "This site counts visits anonymously with Vercel Web Analytics, without cookies. If you accept, it also uses the Meta Pixel to measure my ads, which sets cookies. Bookings are handled by Cal.com.",
+};
+
+export const consent = {
+  text: "Can I use the Meta Pixel? It sets cookies so I can see which of my Instagram and Facebook ads bring people here. The site works the same either way.",
+  accept: "Accept",
+  reject: "Reject",
+  settings: "Cookie settings",
+};
+
+export const privacyPage = {
+  /**
+   * Add an email people can use for privacy questions, for example "hello@yourdomain.com".
+   * While this is null, the page points to TikTok messages instead.
+   */
+  contactEmail: null as string | null,
+  updated: "19 October 2026",
 };

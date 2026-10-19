@@ -1,4 +1,4 @@
-import type { ReactNode, SVGProps } from "react";
+import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -24,6 +24,14 @@ export function ArrowDown(props: IconProps) {
   return (
     <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
       <path d="M10 4v11M5.5 11 10 15.5 14.5 11" />
+    </svg>
+  );
+}
+
+export function ArrowUp(props: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
+      <path d="M10 16V5M5.5 9 10 4.5 14.5 9" />
     </svg>
   );
 }
@@ -91,26 +99,6 @@ export function Close(props: IconProps) {
   return (
     <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
       <path d="m5 5 10 10M15 5 5 15" />
-    </svg>
-  );
-}
-
-export function TopicIcon({ name, ...props }: IconProps & { name: "plate" | "swap" | "dumbbell" | "repeat" }) {
-  const paths: Record<typeof name, ReactNode> = {
-    plate: (
-      <>
-        <circle cx="16" cy="16" r="9" />
-        <circle cx="16" cy="16" r="5" />
-        <path d="M3.5 6v6.5M5.5 6v6.5M3.5 12.5h2M4.5 12.5V26M28.5 6c-1.8 1.4-2.5 4-2.5 7.5h2.5V26" />
-      </>
-    ),
-    swap: <path d="M5 11h20l-4.5-4.5M27 21H7l4.5 4.5" />,
-    dumbbell: <path d="M4 13v6M8 9.5v13M24 9.5v13M28 13v6M8 16h16" />,
-    repeat: <path d="M7 14a9 9 0 0 1 15.6-5.5M23 4.5v4.5h-4.5M25 18a9 9 0 0 1-15.6 5.5M9 27.5V23h4.5" />,
-  };
-  return (
-    <svg viewBox="0 0 32 32" width="32" height="32" {...base} {...props}>
-      {paths[name]}
     </svg>
   );
 }

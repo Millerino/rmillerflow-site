@@ -1,14 +1,22 @@
-import type { AnchorHTMLAttributes, ReactNode } from "react";
+"use client";
 
-type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "rel"> & { children: ReactNode };
+import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from "react";
+import { trackBookClick } from "@/lib/tracking";
 
-/**
- * Every booking action goes through /book, which counts the click and forwards to the Cal.com URL
- * in src/content/site.ts (brand.bookingUrl).
- */
-export function BookLink({ children, ...rest }: Props) {
+type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "rel"> & {
+  children: ReactNode;
+  /** Where on the page the button is, for measurement (e.g. "hero", "sticky"). */
+  source: string;
+};
+
+/** Every "Book" button scrolls to the price and calendar section (#book) and counts the click. */
+export function BookLink({ children, source, onClick, ...rest }: Props) {
+  function handleClick(e: MouseEvent<HTMLAnchorElement>) {
+    trackBookClick(source);
+    onClick?.(e);
+  }
   return (
-    <a href="/book" target="_blank" rel="noopener" {...rest}>
+    <a href="#book" onClick={handleClick} {...rest}>
       {children}
     </a>
   );

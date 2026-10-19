@@ -1,8 +1,8 @@
 # rmillerflow-site
 
-Personal brand site for R. Miller (TikTok @rmillerflow): real food, strength, habits, and 1-on-1 coaching sessions booked through Cal.com.
+Personal brand site for R. Miller (TikTok @rmillerflow): 1-on-1 Fitness & Nutrition Coaching, booked through an embedded Cal.com calendar.
 
-Built with Next.js (App Router) and TypeScript. Plain CSS, no UI or animation libraries. Deployed on Vercel; every push to `main` goes live automatically.
+Built with Next.js (App Router) and TypeScript. Plain CSS, one small dependency for analytics. Deployed on Vercel; every push to `main` goes live.
 
 ## Editing
 
@@ -10,24 +10,25 @@ Almost everything lives in **`src/content/site.ts`**:
 
 | What | Where in `site.ts` |
 | --- | --- |
-| Booking link, TikTok link, handle | `brand` |
-| Price, duration, reschedule window | `session` |
-| Crossed-out previous price | `session.previousPrice` (leave `null` unless it was a real earlier price) |
-| Hero headline and text | `hero` |
-| Section copy | `problem`, `approach`, `checkIn`, `coaching`, `booking`, `about`, `content`, `finalCta`, `footer` |
-| FAQ questions and answers | `faq.items` |
-| Photos | `images` (files live in `public/images/`) |
+| Session name, price, duration, trust line | `session` |
+| Cal.com event (calendar + fallback link) | `brand.bookingUrl`, `brand.calLink` |
+| Meta Pixel ID | `meta.pixelId` (null = no pixel, no cookie banner) |
+| Large hero photo | `images.portrait` (file in `public/images/`) |
+| TikTok stats | `proof.stats` and `proof.statsNote` (empty = hidden) |
+| TikTok images | `proof.images` (files in `public/images/`) |
+| Testimonials | `proof.testimonials` (empty = hidden; real quotes only) |
+| Privacy contact email | `privacyPage.contactEmail` |
+| All other copy and the FAQ | the matching sections |
 
-**Adding a proper portrait:** put the photo in `public/images/` (for example `portrait.jpg`, at least 1000px wide) and set `images.portrait` to `{ src: "/images/portrait.jpg", alt: "R. Miller", width: ..., height: ... }`. It replaces the small avatar in the About section.
+## Measurement
 
-**Swapping the food photos:** replace the files in `public/images/board-*.jpg` (4:3 landscape works best) and update their `alt` text in `images.boards`.
-
-Other files:
-
-- `src/app/globals.css`: colours, type and layout (tokens at the top).
-- `src/app/opengraph-image.jpg`: the preview shown when the link is shared (1200 x 630).
-- `src/app/icon.png`, `src/app/apple-icon.png`: browser and home-screen icons.
-- `src/app/fonts/`: self-hosted Big Shoulders Display and Instrument Sans (SIL Open Font License).
+- **Vercel Web Analytics** (no cookies, always on). Booking steps show up as pages:
+  - `/event/book-click`: someone tapped a Book button
+  - `/event/calendar-view`: the Cal.com calendar became visible
+  - `/event/booking-complete`: Cal.com reported a booking
+- **Meta Pixel** (only after the visitor accepts cookies, only when `meta.pixelId` is set):
+  `PageView` on load, `Lead` once per visit (Book tap or calendar seen), `Schedule` when a booking is made.
+- **UTM parameters** (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`) are kept for the visit and passed to the Cal.com calendar, which stores them with the booking.
 
 ## Local development
 
