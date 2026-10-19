@@ -63,6 +63,7 @@ const personJsonLd = {
   "@type": "Person",
   name: brand.name,
   url: brand.siteUrl,
+  image: `${brand.siteUrl}/images/me-portrait.jpg`,
   sameAs: [brand.tiktokUrl],
 };
 

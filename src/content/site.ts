@@ -49,13 +49,13 @@ export const images = {
    * { src: "/images/portrait.jpg", alt: "R. Miller", width: 1200, height: 1500 }
    * Until then the hero uses the small avatar above.
    */
-  portrait: null as Img | null,
+  portrait: { src: "/images/me-portrait.jpg", alt: "R. Miller by the sea", width: 842, height: 1052 } as Img | null,
 };
 
 export const nav = [
+  { label: "About", href: "#about" },
   { label: "Approach", href: "#approach" },
   { label: "How I help", href: "#coaching" },
-  { label: "About", href: "#about" },
   { label: "FAQs", href: "#faq" },
 ];
 
@@ -222,16 +222,42 @@ export const booking = {
   age: "Sessions are for adults aged 18 and over.",
 };
 
+/** "Who I am": sits right after the hero, with the two lifestyle photos. */
 export const about = {
-  title: "A little about me.",
-  paragraphs: [
-    "Hey, I'm R. Miller.",
-    "I've spent over a decade exploring nutrition, training, and ancestral health.",
-    "Over time, one thing has become pretty clear to me: getting healthier doesn't have to mean following a hundred rules.",
-    "I care about what actually makes a difference. Real food, getting stronger, and habits you can keep doing when life gets busy.",
-    "That's what I share on TikTok, and it's what I help people work through one-on-one.",
+  title: "Health should give you more freedom, not less.",
+  intro:
+    "Hey, I'm R. Miller. I've spent over a decade exploring nutrition, training, and ancestral health. What I care about is pretty simple:",
+  values: [
+    {
+      title: "Freedom",
+      text: "Food and training that fit around your life, not the other way around. Room to travel, move and say yes to things.",
+    },
+    {
+      title: "Health",
+      text: "Real food, good sleep and regular movement. The basics, done well and done often.",
+    },
+    {
+      title: "Vitality",
+      text: "Having energy for your whole day, with some left over for the things you enjoy.",
+    },
   ],
+  closing:
+    "Getting healthier doesn't have to mean following a hundred rules. That's what I share on TikTok, and it's what I help people work through one-on-one.",
   signoff: "No unnecessary complications. Just a better direction.",
+  photos: [
+    {
+      src: "/images/me-coast.jpg",
+      alt: "R. Miller on a seaside path above the Mediterranean",
+      width: 1160,
+      height: 1450,
+    },
+    {
+      src: "/images/me-cliff.jpg",
+      alt: "R. Miller standing on a cliff edge, looking out over the sea",
+      width: 1200,
+      height: 1500,
+    },
+  ] as Img[],
 };
 
 export const faq = {

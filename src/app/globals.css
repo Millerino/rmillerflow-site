@@ -1436,79 +1436,141 @@ h2 {
   }
 }
 
-/* About */
+/* About: who I am, right after the hero */
 .about__grid {
   display: grid;
-  gap: 28px;
+  gap: 36px;
 }
 
-.about__id {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-top: 8px;
+/* Two overlapping prints: the cliff photo sits on top so it never covers the person in the other. */
+.about__photos {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: start;
+  padding: 6px 4px 0;
 }
 
-.about__avatar {
-  width: 104px;
-  height: 104px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px var(--beeswax);
-  transition: transform 0.35s var(--ease-spring);
+.snap {
+  --r: -2.5deg;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 4px solid #fff;
+  background: var(--iron);
+  box-shadow: 0 20px 34px -18px rgba(35, 30, 28, 0.55);
+  transform: rotate(var(--r));
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.3s ease;
 }
 
-.about__name {
-  font: 800 1.75rem/1 var(--display);
-  text-transform: uppercase;
-}
-
-.about__handle {
-  font-size: 0.9375rem;
-  color: var(--muted);
-  text-underline-offset: 3px;
-}
-
-.about__portrait-img {
+.snap img {
+  display: block;
   width: 100%;
   height: auto;
-  margin-top: 12px;
-  border-radius: 14px;
 }
 
-.about__text {
-  max-width: 36rem;
-  font-size: 1.125rem;
-  line-height: 1.6;
+.snap--1 {
+  grid-column: 1 / 8;
+  grid-row: 1;
+  z-index: 1;
 }
 
-.about__text p + p {
-  margin-top: 14px;
+.snap--2 {
+  --r: 2deg;
+  grid-column: 6 / 13;
+  grid-row: 1;
+  z-index: 2;
+  margin-top: 56px;
 }
 
-.about__text .about__first {
-  font: 800 2.25rem/1 var(--display);
+@media (hover: hover) {
+  .snap:hover {
+    transform: rotate(0deg) translateY(-6px) scale(1.03);
+    box-shadow: 0 30px 44px -20px rgba(35, 30, 28, 0.6);
+    z-index: 3;
+  }
+}
+
+.about__intro {
+  margin-bottom: 8px;
+}
+
+.values {
+  margin-top: 22px;
+}
+
+.value {
+  display: grid;
+  gap: 4px;
+  padding: 18px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.value:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.value__title {
+  font: 800 2.25rem/0.95 var(--display);
   text-transform: uppercase;
   color: var(--oxblood);
+  transition:
+    color 0.25s ease,
+    transform 0.3s var(--ease-spring);
+  transform-origin: left center;
 }
 
-.about__text .about__signoff {
+.value__text {
+  max-width: 46ch;
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .value:hover .value__title {
+    color: var(--herb);
+    transform: translateX(6px);
+  }
+}
+
+.about__closing {
   margin-top: 24px;
+  max-width: 50ch;
+  font-size: 1.0625rem;
+}
+
+.about__signoff {
+  margin-top: 18px;
   padding-left: 16px;
   border-left: 4px solid var(--beeswax);
   font-weight: 600;
 }
 
-@media (hover: hover) {
-  .about__id:hover .about__avatar {
-    transform: rotate(-5deg) scale(1.05);
+@media (min-width: 720px) {
+  .about__photos {
+    max-width: 640px;
+  }
+
+  .snap--2 {
+    margin-top: 80px;
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .about__grid {
-    grid-template-columns: 0.85fr 1.15fr;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     gap: 64px;
-    align-items: start;
+    align-items: center;
+  }
+
+  .about__photos {
+    max-width: none;
+  }
+
+  .value {
+    grid-template-columns: 170px 1fr;
+    align-items: baseline;
+    gap: 20px;
   }
 }
 
