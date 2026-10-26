@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cta } from "@/content/site";
+import { sticky } from "@/content/site";
 import { BookLink } from "./BookLink";
 
 /**
- * Small phone-only "Choose a time · US$30" button. It appears once the main button has scrolled
- * away and steps aside whenever it could cover something that matters: the booking section, the
- * footer (with the cookie settings), the booking drawer or the cookie banner.
+ * Slim phone-only "Book your call · US$30" button. It appears once the main button has scrolled
+ * away and steps aside whenever it would sit on top of another booking button or something that
+ * matters: the closing booking section, the footer (cookie settings), the dialog or the cookie banner.
  */
 export function StickyBook() {
   const [show, setShow] = useState(false);
@@ -43,8 +43,8 @@ export function StickyBook() {
 
   return (
     <div className="sticky-book" data-show={show} inert={!show}>
-      <BookLink className="btn btn--light sticky-book__btn" source="sticky">
-        {cta.sticky}
+      <BookLink className="sticky-book__btn" source="sticky">
+        {sticky.label}
       </BookLink>
     </div>
   );

@@ -1,31 +1,32 @@
-import { cta, howItWorks } from "@/content/site";
+import { howItWorks } from "@/content/site";
 import { BookLink } from "./BookLink";
+import { ArrowRight } from "./icons";
 
+/** Three steps, from choosing a time to leaving with next steps. */
 export function HowItWorks() {
   return (
-    <section className="section section--beeswax how" id="how" aria-labelledby="how-title">
+    <section className="section section--sand" id="how" aria-labelledby="how-title">
       <div className="wrap">
         <h2 id="how-title" data-reveal>
           {howItWorks.title}
         </h2>
-        <ol className="steps" data-reveal>
-          {howItWorks.steps.map((s, i) => (
-            <li key={s.title} className="step">
-              <span className="step__n" aria-hidden="true">
+        <ol className="steps">
+          {howItWorks.steps.map((step, i) => (
+            <li key={step.title} className="steps__item" data-reveal style={{ transitionDelay: `${i * 70}ms` }}>
+              <span className="steps__n" aria-hidden="true">
                 {i + 1}
               </span>
               <div>
-                <h3 className="step__title">{s.title}</h3>
-                <p className="step__text">{s.text}</p>
+                <h3 className="steps__title">{step.title}</h3>
+                <p className="steps__text">{step.text}</p>
               </div>
             </li>
           ))}
         </ol>
-        <div className="how__cta" data-reveal>
-          <BookLink className="btn btn--dark" source="how">
-            {cta.primary}
-          </BookLink>
-        </div>
+        <BookLink className="textlink steps__cta" source="how">
+          {howItWorks.steps[0].title}
+          <ArrowRight className="textlink__arrow" />
+        </BookLink>
       </div>
     </section>
   );

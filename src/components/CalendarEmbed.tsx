@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { booking, brand } from "@/content/site";
-import { trackBooked, trackCalendarViewed } from "@/lib/tracking";
+import { brand, flow } from "@/content/site";
+import { trackBooked, trackCalendarError, trackCalendarViewed } from "@/lib/tracking";
 import { getUtm, withUtm } from "@/lib/utm";
 import { ArrowUpRight } from "./icons";
 
@@ -18,7 +18,8 @@ declare global {
   }
 }
 
-const EMBED_SRC = "https://app.cal.com/embed/embed.js";
+const CAL_ORIGIN = "https://app.cal.com";
+const EMBED_SRC = `${CAL_ORIGIN}/embed/embed.js`;
 
 /** Cal.com's official loader (from @calcom/embed-snippet), queued until embed.js arrives. */
 function installCalLoader() {
@@ -51,93 +52,85 @@ function installCalLoader() {
   w.Cal = cal;
 }
 
+/** Warms up the connection to Cal.com while the visitor answers the questions. */
+export function preconnectCal() {
+  if (document.querySelector(`link[data-cal-warm]`)) return;
+  const pre = document.createElement("link");
+  pre.rel = "preconnect";
+  pre.href = CAL_ORIGIN;
+  pre.dataset.calWarm = "";
+  const script = document.createElement("link");
+  script.rel = "preload";
+  script.as = "script";
+  script.href = EMBED_SRC;
+  document.head.append(pre, script);
+}
+
 type Props = {
-  /** Each calendar on the page needs its own Cal.com namespace. */
+  /** Each calendar instance needs its own Cal.com namespace. */
   namespace: string;
-  /**
-   * "near": load when the visitor scrolls close to it (or jumps to #book).
-   * "manual": load only when `active` becomes true (the drawer opening).
-   */
-  load: "near" | "manual";
-  active?: boolean;
+  /** Prefills Cal.com's "Additional notes" field. */
+  notes?: string;
 };
 
-/** Inline Cal.com booking calendar, loaded only when it's about to be needed. */
-export function CalendarEmbed({ namespace, load, active = false }: Props) {
+/**
+ * Inline Cal.com booking calendar (real availability, booking form and payment all come from
+ * Cal.com). It starts loading when it mounts, which only happens when the calendar step opens.
+ */
+export function CalendarEmbed({ namespace, notes }: Props) {
   const boxRef = useRef<HTMLDivElement>(null);
   const started = useRef(false);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "failed">("idle");
+  const [status, setStatus] = useState<"loading" | "ready" | "failed">("loading");
   const [fallbackUrl, setFallbackUrl] = useState(brand.bookingUrl);
 
-  function start() {
+  useEffect(() => {
+    const utm = getUtm();
+    const fallback = new URL(withUtm(brand.bookingUrl, utm));
+    if (notes) fallback.searchParams.set("notes", notes);
+    setFallbackUrl(fallback.toString());
+
     if (started.current || !boxRef.current) return;
     started.current = true;
-    setStatus("loading");
     installCalLoader();
     const Cal = window.Cal!;
-    Cal("init", namespace, { origin: "https://app.cal.com" });
+    Cal("init", namespace, { origin: CAL_ORIGIN });
     const ns = Cal.ns![namespace];
     ns("inline", {
       elementOrSelector: boxRef.current,
       calLink: brand.calLink,
-      config: { layout: "month_view", theme: "light", ...getUtm() },
+      config: { layout: "month_view", theme: "light", ...utm, ...(notes ? { notes } : {}) },
     });
     ns("ui", {
       theme: "light",
       layout: "month_view",
       hideEventTypeDetails: true,
       styles: { body: { background: "transparent" } },
-      cssVarsPerTheme: { light: { "cal-brand": "#5a1b17" }, dark: { "cal-brand": "#e3ad4e" } },
+      cssVarsPerTheme: { light: { "cal-brand": "#263d33" }, dark: { "cal-brand": "#e9e2d7" } },
     });
+    const fail = () => {
+      setStatus("failed");
+      trackCalendarError();
+    };
     ns("on", { action: "linkReady", callback: () => setStatus("ready") });
-    ns("on", { action: "linkFailed", callback: () => setStatus("failed") });
+    ns("on", { action: "linkFailed", callback: fail });
     ns("on", { action: "bookerViewed", callback: () => trackCalendarViewed() });
     ns("on", { action: "bookingSuccessfulV2", callback: () => trackBooked() });
     // If Cal.com is blocked or very slow, offer the direct link instead of an empty box.
-    window.setTimeout(() => setStatus((s) => (s === "loading" ? "failed" : s)), 15000);
-  }
-
-  useEffect(() => {
-    setFallbackUrl(withUtm(brand.bookingUrl));
-  }, []);
-
-  useEffect(() => {
-    if (load === "manual" && active) start();
-  }, [load, active]);
-
-  useEffect(() => {
-    if (load !== "near") return;
-    const el = boxRef.current;
-    if (!el) return;
-    const onHash = () => window.location.hash === "#book" && start();
-    window.addEventListener("hashchange", onHash);
-    if (window.location.hash === "#book") start();
-    if (!("IntersectionObserver" in window)) {
-      start();
-      return () => window.removeEventListener("hashchange", onHash);
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          start();
-          io.disconnect();
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    io.observe(el);
-    return () => {
-      io.disconnect();
-      window.removeEventListener("hashchange", onHash);
-    };
-  }, [load]);
+    const timer = window.setTimeout(() => {
+      setStatus((s) => {
+        if (s === "loading") trackCalendarError();
+        return s === "loading" ? "failed" : s;
+      });
+    }, 15000);
+    return () => window.clearTimeout(timer);
+  }, [namespace, notes]);
 
   return (
     <div className="calendar" data-status={status}>
       <div ref={boxRef} className="calendar__box" />
-      {status === "loading" || status === "idle" ? (
+      {status === "loading" ? (
         <p className="calendar__status" aria-live="polite">
-          {booking.calendarLoading}
+          {flow.calendarLoading}
         </p>
       ) : null}
       <a
@@ -147,7 +140,7 @@ export function CalendarEmbed({ namespace, load, active = false }: Props) {
         rel="noopener"
         data-prominent={status === "failed"}
       >
-        {booking.calendarFallback}
+        {flow.calendarFallback}
         <ArrowUpRight width={16} height={16} />
       </a>
     </div>

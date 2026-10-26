@@ -1,27 +1,41 @@
 "use client";
 
-import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from "react";
-import { openBooking } from "@/lib/booking";
-import { trackBookClick } from "@/lib/tracking";
+import { useEffect, useState, type AnchorHTMLAttributes, type MouseEvent, type ReactNode } from "react";
+import { brand } from "@/content/site";
+import { openBooking, type BookingMode } from "@/lib/booking";
+import { trackBookClick, trackGuidedStart } from "@/lib/tracking";
+import { withUtm } from "@/lib/utm";
 
 type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "rel"> & {
   children: ReactNode;
   /** Where on the page the button is, for measurement (e.g. "hero", "sticky"). */
   source: string;
+  /** "direct" opens the calendar straight away; "guided" starts with the two questions. */
+  mode?: BookingMode;
 };
 
 /**
- * Every primary booking button. It opens the booking drawer with the Cal.com calendar straight
- * away. Without JavaScript (or if the drawer can't open) it is a plain link to the booking section.
+ * Every booking button. It opens the booking dialog on this page. Without JavaScript (or if the
+ * dialog can't open) it is a plain link to the Cal.com booking page, so booking always works.
  */
-export function BookLink({ children, source, onClick, ...rest }: Props) {
+export function BookLink({ children, source, mode = "direct", onClick, ...rest }: Props) {
+  const [href, setHref] = useState(brand.bookingUrl);
+
+  useEffect(() => {
+    setHref(withUtm(brand.bookingUrl));
+  }, []);
+
   function handleClick(e: MouseEvent<HTMLAnchorElement>) {
-    trackBookClick(source);
-    if (openBooking(e.currentTarget)) e.preventDefault();
+    // Let people open the Cal.com page in a new tab if they want to.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    if (mode === "guided") trackGuidedStart();
+    else trackBookClick(source);
+    if (openBooking(e.currentTarget, mode)) e.preventDefault();
     onClick?.(e);
   }
+
   return (
-    <a href="#book" onClick={handleClick} {...rest}>
+    <a href={href} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

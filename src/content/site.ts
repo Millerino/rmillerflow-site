@@ -7,28 +7,68 @@ export type Img = { src: string; alt: string; width: number; height: number };
 
 export const brand = {
   name: "R. Miller",
-  coach: "coach Miller",
+  coach: "Coach Miller",
   handle: "@rmillerflow",
   siteUrl: "https://rmillerflow-site.vercel.app",
   tiktokUrl: "https://www.tiktok.com/@rmillerflow",
-  /** The Cal.com event. Both calendars on the page and the fallback link use it. */
+  /** The Cal.com event. The calendar and every fallback link use it. */
   bookingUrl: "https://cal.com/rokas-miller-ovcrq8/30min",
   /** Same event, written the way the Cal.com embed wants it (no domain). */
   calLink: "rokas-miller-ovcrq8/30min",
   minimumAge: 18,
 };
 
+/** The offer. The amount people actually pay is set in Cal.com: keep the two in step. */
 export const session = {
-  name: "1-on-1 Fitness & Nutrition Coaching",
+  name: "Private coaching call",
   durationMinutes: 30,
-  price: 30,
   priceLabel: "US$30",
-  currency: "USD",
-  format: "One-on-one video call",
+  format: "Private video call",
   rescheduleHours: 24,
-  details: "30 minutes · US$30 · One-on-one video call",
-  reschedule: "Free rescheduling up to 24 hours before your session.",
+  reschedule: "Free rescheduling with at least 24 hours' notice.",
 };
+
+/**
+ * Optional price promotion. Leave it null unless it is true.
+ *
+ * - "intro": an introductory price with a real end date. Shown as "US$30 intro price" with the
+ *   note "US$60 from 1 January 2027". It switches itself off at `endsAt` (the page refreshes
+ *   hourly), after which the site shows the plain price from `session`. On that date, raise the
+ *   price in Cal.com and update `session.priceLabel` so the site and the payment match.
+ * - "sale": a real reduction from a price you have actually charged. Norwegian rules
+ *   (prisopplysningsforskriften § 9a and markedsføringsloven § 7) require the struck-through price
+ *   to be the lowest price you charged in the 30 days before the sale started.
+ */
+export type PricePromo =
+  | { kind: "intro"; regularLabel: string; from: string; endsAt: string }
+  | { kind: "sale"; wasLabel: string; percentOff: number; untilLabel?: string; endsAt?: string };
+
+export const pricePromo = {
+  kind: "intro",
+  regularLabel: "US$60",
+  from: "1 January 2027",
+  endsAt: "2027-01-01T00:00:00+01:00",
+} as PricePromo | null;
+
+/** The promotion if it is still running, otherwise null. */
+export function activePromo(now: number = Date.now()): PricePromo | null {
+  const promo = pricePromo;
+  if (!promo) return null;
+  if (promo.endsAt && now >= Date.parse(promo.endsAt)) return null;
+  return promo;
+}
+
+/** "US$30 intro price" while the intro price runs, otherwise "US$30". */
+export function priceText(promo: PricePromo | null): string {
+  return promo?.kind === "intro" ? `${session.priceLabel} intro price` : session.priceLabel;
+}
+
+/** The small note under a price, or null when there is no promotion. */
+export function promoNote(promo: PricePromo | null): string | null {
+  if (!promo) return null;
+  if (promo.kind === "intro") return `${promo.regularLabel} from ${promo.from}.`;
+  return `${promo.percentOff}% off${promo.untilLabel ? ` until ${promo.untilLabel}` : ""}. Was ${promo.wasLabel}.`;
+}
 
 /**
  * Meta (Facebook/Instagram) Pixel. Paste the Pixel ID as a string, e.g. "123456789012345".
@@ -39,190 +79,146 @@ export const meta = {
 };
 
 export const images = {
-  avatar: { src: "/images/avatar.jpg", alt: "R. Miller", width: 368, height: 368 } satisfies Img,
   portrait: { src: "/images/me-portrait.jpg", alt: "Coach Miller by the sea", width: 842, height: 1052 } satisfies Img,
+  coast: {
+    src: "/images/me-coast.jpg",
+    alt: "Coach Miller on a seaside path above the Mediterranean",
+    width: 1160,
+    height: 1450,
+  } satisfies Img,
+  cliff: {
+    src: "/images/me-cliff.jpg",
+    alt: "Coach Miller standing on a cliff edge, looking out over the sea",
+    width: 1200,
+    height: 1500,
+  } satisfies Img,
 };
 
-export const nav = [
-  { label: "What we'll cover", href: "#cover" },
-  { label: "How it works", href: "#how" },
-  { label: "About", href: "#about" },
-  { label: "FAQs", href: "#faq" },
-];
-
-/**
- * Optional price promotion, shown next to the price in the first screen, the booking drawer and
- * the booking section. Leave it null unless it is true. The price people pay is always the one set
- * in Cal.com, so change it there too.
- *
- * - "intro": an introductory price with a real end date. Shows "Intro price" and
- *   "US$60 from 1 January 2027". When the date comes, raise the price in Cal.com and set this back
- *   to null.
- * - "sale": a real reduction from a price you have actually charged. Norwegian rules
- *   (prisopplysningsforskriften § 9a and markedsføringsloven § 7) require the struck-through price
- *   to be the lowest price you charged in the 30 days before the sale started. A price you never
- *   charged must not be shown as a "before" price.
- */
-export type PricePromo =
-  | { kind: "intro"; regularLabel: string; from: string }
-  | { kind: "sale"; wasLabel: string; percentOff: number; until?: string };
-
-export const pricePromo = {
-  kind: "intro",
-  regularLabel: "US$60",
-  from: "1 January 2027",
-} as PricePromo | null;
-
-/** One short line describing the promotion, or null when there is none. */
-export function promoLine(promo: PricePromo | null = pricePromo): string | null {
-  if (!promo) return null;
-  if (promo.kind === "intro") return `Intro price. ${promo.regularLabel} from ${promo.from}.`;
-  return `${promo.percentOff}% off${promo.until ? ` until ${promo.until}` : ""}. Was ${promo.wasLabel}.`;
-}
-
-/** Labels for the booking buttons. Every one of them opens the same Cal.com calendar. */
-export const cta = {
-  primary: "Choose a time",
-  /** The big button on the first screen. */
-  start: "Book your coaching call",
-  startSub: "Choose a time",
-  short: "Book",
-  sticky: "Choose a time · US$30",
+export const header = {
+  book: "Book a call",
 };
 
 export const hero = {
-  kicker: "Meet coach Miller",
-  intro: "10+ years exploring nutrition, training and ancestral health.",
-  title: "Clearer food choices.",
-  titleAccent: "A plan that fits your life.",
-  text: "A focused 30-minute video call to discuss your routine and choose practical next steps for food, training and everyday habits.",
-  /** The few options under the main button, for visitors who want to know more first. */
-  optionsTitle: "Want to know more first?",
-  options: [
-    { label: "What we'll cover", href: "#cover" },
-    { label: "How it works", href: "#how" },
-    { label: "Meet coach Miller", href: "#about" },
-    { label: "FAQs", href: "#faq" },
-  ],
+  eyebrow: "Personal coaching with Miller",
+  title: "Get clear on",
+  titleAccent: "food and training.",
+  text: "One focused 30-minute call to find practical next steps for your food, training and everyday routine.",
+  book: "Book my 30-minute call",
+  guided: "Help me find my focus",
+  photoTag: "Coach Miller",
+  photoCaption: "10+ years exploring nutrition, training and ancestral health.",
 };
 
 export const leaveWith = {
-  title: "What you'll leave with",
-  intro: "Practical next steps you can start on. Not a promise of specific results.",
+  title: "Leave with clarity.",
   items: [
-    {
-      title: "Clearer priorities for your food choices",
-      text: "Built around real food and what you actually like to eat.",
-    },
-    {
-      title: "A realistic direction for strength training",
-      text: "Matched to your schedule, your experience and the equipment you have.",
-    },
-    {
-      title: "A small set of repeatable habits",
-      text: "Chosen to fit the schedule you already have.",
-    },
+    { title: "Clearer priorities", text: "Identify what matters most for your current routine." },
+    { title: "Practical next steps", text: "Find realistic changes you can start making." },
+    { title: "A more personal approach", text: "Talk through what works for your circumstances and goals." },
   ],
-  topicsTitle: "Topics can include",
-  topics: ["Eating", "Training", "Sleep", "Energy", "Digestion", "Goals", "Schedule", "Constraints"],
 };
 
 export const howItWorks = {
-  title: "How the session works",
+  title: "How it works",
   steps: [
-    {
-      title: "Choose a time",
-      text: "Pick a slot that suits you and pay US$30 when you book. Free rescheduling up to 24 hours before.",
-    },
-    {
-      title: "Talk it through",
-      text: "On a 30-minute video call, we go through your current routine, your goals and your constraints, like time and equipment.",
-    },
-    {
-      title: "Leave with next steps",
-      text: "Practical next steps for food, training and everyday habits that fit your life.",
-    },
+    { title: "Choose your time", text: `Pick a slot and pay ${session.priceLabel} when you book.` },
+    { title: "Join your private video call", text: "30 minutes, one-on-one with Coach Miller." },
+    { title: "Leave with practical next steps", text: "For your food, training and everyday routine." },
   ],
 };
 
 export const about = {
-  title: "Health should give you more freedom, not less.",
+  title: "Meet Coach Miller",
   paragraphs: [
-    "Hey, I'm coach Miller. I've spent over a decade exploring nutrition, training and ancestral health, and I share what I learn on TikTok.",
-    "What I care about is freedom, health and vitality: food and training that fit around your life instead of taking it over.",
-    "I look at food through an ancestral, animal-based-informed lens. It's a perspective I bring, not a diet you have to follow.",
+    "I'm Miller. I've spent over a decade exploring nutrition, training and ancestral health. My approach is about making better choices feel practical, sustainable and personal.",
+    "Health should give you more freedom, not less. I look at food through an ancestral, animal-based lens, but it's a perspective I bring, not a diet you have to follow.",
   ],
-  tiktokCta: "Follow @rmillerflow on TikTok",
-  photos: [
-    {
-      src: "/images/me-coast.jpg",
-      alt: "Coach Miller on a seaside path above the Mediterranean",
-      width: 1160,
-      height: 1450,
-    },
-    {
-      src: "/images/me-cliff.jpg",
-      alt: "Coach Miller standing on a cliff edge, looking out over the sea",
-      width: 1200,
-      height: 1500,
-    },
-  ] as Img[],
-};
-
-export const booking = {
-  title: "Choose a time",
-  intro: "Pick a time that suits you, add your details and pay US$30 to confirm your session.",
-  drawerTitle: "Choose a time",
-  close: "Close booking",
-  calendarLoading: "Loading available times",
-  calendarFallback: "Calendar not loading? Open it on Cal.com",
-  fine: [
-    "Sessions are for adults aged 18 and over.",
-    "Coaching is general fitness and nutrition education, not medical advice or treatment.",
-  ],
+  tiktok: "Follow @rmillerflow on TikTok",
 };
 
 export const faq = {
-  title: "Questions",
+  title: "Common questions",
   items: [
     {
-      q: "Is this for beginners?",
-      a: "Yes. You don't need to have anything figured out before booking. We start with where you are.",
+      q: "What will we talk about?",
+      a: "Whatever matters most to you right now. Topics can include eating, training, sleep, energy, digestion, your goals, your schedule and your constraints.",
+    },
+    {
+      q: "Is this call right for me?",
+      a: "It's for adults aged 18 and over who want practical, personal next steps for food, training and everyday habits, whether you're just starting or have tried a lot already. Coaching is general fitness and nutrition education, not medical advice or treatment. If you have a medical condition or take medication, check with your doctor first.",
+    },
+    {
+      q: "How does scheduling and payment work?",
+      a: `Pick a time in the calendar, add your details and pay ${session.priceLabel} to confirm your call. Cal.com handles the booking and sends you a confirmation.`,
+    },
+    {
+      q: "Can I reschedule?",
+      a: "Yes, free of charge with at least 24 hours' notice.",
     },
     {
       q: "Do I have to follow an animal-based diet?",
-      a: "No. Ancestral and animal-based nutrition is a lens coach Miller brings, not a diet you have to follow. We work from what suits you, your preferences and your goals.",
-    },
-    {
-      q: "Do I need a gym membership?",
-      a: "Not necessarily. We'll talk about training options that fit your schedule and the equipment you have.",
-    },
-    {
-      q: "What happens after the call?",
-      a: "You leave with the next steps we agreed on. This is a single paid session, and there's no obligation to book anything else.",
-    },
-    ...(pricePromo?.kind === "intro"
-      ? [
-          {
-            q: "Will the price change?",
-            a: `Yes. ${session.priceLabel} is an introductory price. From ${pricePromo.from} a session will cost ${pricePromo.regularLabel}. You pay the price shown when you book.`,
-          },
-        ]
-      : []),
-    {
-      q: "Can I reschedule?",
-      a: "Yes, free of charge up to 24 hours before your session.",
-    },
-    {
-      q: "Who can book?",
-      a: "Anyone aged 18 or over.",
-    },
-    {
-      q: "Is this medical advice?",
-      a: "No. Coaching is general fitness and nutrition education, not medical advice or treatment. If you have a medical condition or take medication, check with your doctor first.",
+      a: "No. It's a lens Coach Miller brings, not a diet you have to follow. We work from your preferences and your goals.",
     },
   ],
-  closing: "Ready when you are.",
+  /** Shown only while the intro price runs. */
+  introPrice: (promo: Extract<PricePromo, { kind: "intro" }>) => ({
+    q: "Will the price change?",
+    a: `Yes. ${session.priceLabel} is an introductory price. From ${promo.from} a call will cost ${promo.regularLabel}. You pay the price shown when you book.`,
+  }),
+};
+
+export const finalCta = {
+  title: "Ready for some clarity?",
+  text: "30 minutes, one-on-one, on video. Pick a time that suits you.",
+  button: `Choose a time · ${session.priceLabel}`,
+};
+
+export const sticky = {
+  label: `Book your call · ${session.priceLabel}`,
+};
+
+/** The booking dialog: the two optional questions and the calendar step. */
+export const flow = {
+  close: "Close",
+  back: "Back",
+  skip: "Skip to calendar",
+  progress: (n: number) => `${n} of 2`,
+  intro: "Two quick questions to help focus our call.",
+  q1: {
+    title: "What would you most like help with?",
+    options: [
+      { id: "food", label: "Food & nutrition", icon: "food" },
+      { id: "training", label: "Training & fitness", icon: "training" },
+      { id: "habits", label: "Everyday habits", icon: "habits" },
+      { id: "everything", label: "A bit of everything", icon: "everything" },
+    ],
+  },
+  q2: {
+    title: "What's your biggest challenge right now?",
+    options: [
+      { id: "start", label: "Knowing where to start" },
+      { id: "consistent", label: "Staying consistent" },
+      { id: "advice", label: "Too much conflicting advice" },
+      { id: "fit", label: "Finding what works for me" },
+    ],
+  },
+  /** Calendar heading, personalised by the first answer. */
+  calendarTitle: {
+    direct: "Choose a time that works for you.",
+    food: "Let's find a time to talk about your food choices.",
+    training: "Let's find a time to talk about your training.",
+    habits: "Let's find a time to talk about your everyday habits.",
+    everything: "Let's find a time to talk it all through.",
+  } as Record<string, string>,
+  summaryWith: "With Coach Miller",
+  payNote: `You pay when you book. ${session.reschedule}`,
+  notesLabel: "Added to your booking notes:",
+  calendarLoading: "Loading available times",
+  calendarFallback: "Calendar not loading? Open it on Cal.com",
+  fine: [
+    "Calls are for adults aged 18 and over.",
+    "Coaching is general fitness and nutrition education, not medical advice or treatment.",
+  ],
 };
 
 export const footer = {

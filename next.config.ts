@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
   async redirects() {
-    // Booking now happens on the home page; keep old /book links working.
-    return [{ source: "/book", destination: "/#book", permanent: false }];
+    // Booking happens on the home page; old /book links open the calendar straight away.
+    return [{ source: "/book", destination: "/?start=book", permanent: false }];
   },
 };
 

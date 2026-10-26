@@ -1,82 +1,65 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { cta, hero, images, promoLine, session } from "@/content/site";
+import { hero, images, priceText, session, type PricePromo } from "@/content/site";
 import { BookLink } from "./BookLink";
-import { ArrowRight } from "./icons";
-import { PriceTag } from "./PriceTag";
+import { ArrowRight, Compass } from "./icons";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
 /**
- * First screen: a short intro, then a few clear choices. The big button opens the booking
- * calendar straight away; the smaller options jump to the parts of the page that explain more.
- * On phones the photo stays small beside the intro so the button is always on the first screen.
+ * First screen: who, what, price and one obvious next step. The portrait sits beside the
+ * headline on phones so the booking button stays on the first screen.
  */
-export function Hero() {
+export function Hero({ promo }: { promo: PricePromo | null }) {
   const photo = images.portrait;
-  const promo = promoLine();
 
   return (
     <section className="hero" id="top" aria-labelledby="hero-title">
       <div className="wrap hero__grid">
-        <div className="hero__photo load-rise" style={delay(0)}>
-          <Image
-            src={photo.src}
-            alt={photo.alt}
-            width={photo.width}
-            height={photo.height}
-            sizes="(min-width: 960px) 400px, 92px"
-            preload
-          />
-        </div>
+        <p className="eyebrow hero__eyebrow rise" style={delay(0)}>
+          {hero.eyebrow}
+        </p>
 
-        <div className="hero__who load-rise" style={delay(40)}>
-          <p className="hero__kicker">{hero.kicker}</p>
-          <p className="hero__intro">{hero.intro}</p>
-        </div>
+        <h1 id="hero-title" className="hero__title rise" style={delay(60)}>
+          {hero.title} <em>{hero.titleAccent}</em>
+        </h1>
 
-        <div className="hero__copy">
-          <h1 id="hero-title" className="hero__title load-rise" style={delay(80)}>
-            <span>{hero.title} </span>
-            <span className="hero__accent">{hero.titleAccent}</span>
-          </h1>
-          <p className="hero__text load-rise" style={delay(120)}>
-            {hero.text}
-          </p>
-
-          <div className="hero__start load-rise" style={delay(160)}>
-            <BookLink className="startbtn" id="hero-cta" source="hero">
-              <span className="startbtn__text">
-                <span className="startbtn__main">{cta.start}</span>
-                <span className="startbtn__sub">
-                  {cta.startSub}
-                  <ArrowRight className="startbtn__arrow" />
-                </span>
-              </span>
-              <PriceTag className="startbtn__price" />
-            </BookLink>
-            <div className="hero__facts">
-              <p className="hero__details">{session.details}</p>
-              {promo && <p className="hero__promo">{promo}</p>}
-              <p className="hero__reschedule">{session.reschedule}</p>
-            </div>
+        <figure className="hero__figure rise" style={delay(30)}>
+          <div className="hero__photo">
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              sizes="(min-width: 960px) 440px, 42vw"
+              preload
+            />
+            <span className="hero__tag" aria-hidden="true">
+              {hero.photoTag}
+            </span>
           </div>
+          <figcaption className="hero__caption">
+            <strong>{hero.photoTag}</strong>
+            <span>{hero.photoCaption}</span>
+          </figcaption>
+        </figure>
 
-          <nav className="hero__options load-rise" style={delay(200)} aria-labelledby="hero-options-title">
-            <p id="hero-options-title" className="hero__options-title">
-              {hero.optionsTitle}
-            </p>
-            <ul>
-              {hero.options.map((o) => (
-                <li key={o.href}>
-                  <a className="option" href={o.href}>
-                    <span>{o.label}</span>
-                    <ArrowRight className="option__arrow" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <p className="hero__text rise" style={delay(120)}>
+          {hero.text}
+        </p>
+
+        <div className="hero__actions rise" style={delay(170)}>
+          <BookLink id="hero-cta" className="btn btn--forest btn--block hero__cta" source="hero">
+            {hero.book}
+            <ArrowRight className="btn__arrow" />
+          </BookLink>
+          <p className="hero__meta">
+            {priceText(promo)} · {session.durationMinutes} min · {session.format}
+          </p>
+          <BookLink className="hero__guided" source="hero-guided" mode="guided">
+            <Compass />
+            {hero.guided}
+          </BookLink>
         </div>
       </div>
     </section>

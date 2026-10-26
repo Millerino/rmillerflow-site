@@ -7,12 +7,12 @@ import "./globals.css";
 
 const display = localFont({
   src: [
-    { path: "./fonts/big-shoulders-display-latin-800-normal.woff2", weight: "800", style: "normal" },
-    { path: "./fonts/big-shoulders-display-latin-900-normal.woff2", weight: "900", style: "normal" },
+    { path: "./fonts/instrument-serif-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/instrument-serif-latin-400-italic.woff2", weight: "400", style: "italic" },
   ],
   variable: "--font-display",
   display: "swap",
-  fallback: ["Arial Narrow", "Roboto Condensed", "sans-serif"],
+  fallback: ["Georgia", "Times New Roman", "serif"],
 });
 
 const body = localFont({
@@ -26,9 +26,9 @@ const body = localFont({
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
-const title = "R. Miller | 1-on-1 Fitness & Nutrition Coaching";
+const title = "R. Miller | Personal coaching call with Coach Miller";
 const description =
-  "Meet coach Miller. A focused 30-minute video call to choose practical next steps for food, training and everyday habits. US$30, free rescheduling up to 24 hours before.";
+  "One focused 30-minute video call with Coach Miller to find practical next steps for your food, training and everyday routine. US$30, free rescheduling with at least 24 hours' notice.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(brand.siteUrl),
@@ -50,7 +50,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#5A1B17",
+  themeColor: "#F7F4EE",
   colorScheme: "light",
 };
 

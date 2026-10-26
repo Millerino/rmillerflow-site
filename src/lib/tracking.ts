@@ -133,16 +133,47 @@ function lead(source: string) {
   fbTrack("Lead", { content_name: session.name, content_category: source });
 }
 
-/** Someone tapped any "Book" button. */
+/** Someone tapped a direct booking button ("Book my 30-minute call", sticky, header...). */
 export function trackBookClick(source: string) {
   virtualView("/event/book-click");
   lead(source);
 }
 
-/** The embedded Cal.com calendar became visible to the visitor. */
+/*
+ * The optional two-question flow. Only the step is recorded, never the answers.
+ */
+export function trackGuidedStart() {
+  virtualView("/event/guided-start");
+}
+
+export function trackGuidedAnswer(step: 1 | 2) {
+  virtualView(`/event/guided-answer-${step}`);
+}
+
+export function trackGuidedSkip() {
+  virtualView("/event/guided-skip");
+}
+
+/** The dialog was closed during the questions, before reaching the calendar. */
+export function trackGuidedClose() {
+  virtualView("/event/guided-close");
+}
+
+/** The calendar step of the booking dialog was shown (direct or after the questions). */
+export function trackCalendarOpen() {
+  virtualView("/event/calendar-open");
+  lead("calendar");
+}
+
+/** Cal.com's booking calendar finished loading and became visible. */
 export function trackCalendarViewed() {
   virtualView("/event/calendar-view");
   lead("calendar");
+}
+
+/** Cal.com failed to load (blocked, offline or too slow). */
+export function trackCalendarError() {
+  virtualView("/event/calendar-error");
 }
 
 /** Cal.com reported a completed booking in the embed. */
