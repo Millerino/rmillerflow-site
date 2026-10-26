@@ -12,34 +12,18 @@ const base = {
   focusable: false,
 };
 
-export function ArrowRight(props: IconProps) {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
-      <path d="M4 10h11M11 5.5 15.5 10 11 14.5" />
-    </svg>
-  );
-}
-
-export function ArrowDown(props: IconProps) {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
-      <path d="M10 4v11M5.5 11 10 15.5 14.5 11" />
-    </svg>
-  );
-}
-
-export function ArrowUp(props: IconProps) {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
-      <path d="M10 16V5M5.5 9 10 4.5 14.5 9" />
-    </svg>
-  );
-}
-
 export function ArrowUpRight(props: IconProps) {
   return (
     <svg viewBox="0 0 20 20" width="20" height="20" {...base} {...props}>
       <path d="M6 14 14 6M7.5 6H14v6.5" />
+    </svg>
+  );
+}
+
+export function ArrowRight(props: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" width="18" height="18" {...base} {...props}>
+      <path d="M4 10h11.5M11 5.5 15.5 10 11 14.5" />
     </svg>
   );
 }
@@ -52,37 +36,12 @@ export function Chevron(props: IconProps) {
   );
 }
 
-export function Check(props: IconProps) {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" {...base} strokeWidth={2.2} {...props}>
-      <path d="m4.5 10.5 3.5 3.5 7.5-8" />
-    </svg>
-  );
-}
-
-/** Circled cross and tick: the swap marks used across the brand's guides. */
-export function MarkX(props: IconProps) {
-  return (
-    <svg viewBox="0 0 26 26" width="26" height="26" {...base} {...props}>
-      <circle cx="13" cy="13" r="11.5" />
-      <path d="M9 9l8 8M17 9l-8 8" />
-    </svg>
-  );
-}
-
+/** Circled tick, the mark used in the brand's swap guides. */
 export function MarkOk(props: IconProps) {
   return (
     <svg viewBox="0 0 26 26" width="26" height="26" {...base} {...props}>
       <circle cx="13" cy="13" r="11.5" />
       <path d="M8.2 13.4l3.2 3.2 6.4-6.8" />
-    </svg>
-  );
-}
-
-export function SwapArrow(props: IconProps) {
-  return (
-    <svg viewBox="0 0 44 12" width="44" height="12" {...base} strokeWidth={1.6} {...props}>
-      <path d="M1 6h40M36 1.5 41.5 6 36 10.5" />
     </svg>
   );
 }

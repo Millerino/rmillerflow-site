@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { faq } from "@/content/site";
+import { cta, faq } from "@/content/site";
+import { BookLink } from "./BookLink";
 import { Chevron } from "./icons";
 
 export function Faq() {
@@ -56,7 +57,12 @@ export function Faq() {
               );
             })}
           </div>
-          <p className="faq__disclaimer">{faq.disclaimer}</p>
+          <div className="faq__end">
+            <p className="faq__closing">{faq.closing}</p>
+            <BookLink className="btn btn--oxblood" source="faq">
+              {cta.primary}
+            </BookLink>
+          </div>
         </div>
       </div>
     </section>

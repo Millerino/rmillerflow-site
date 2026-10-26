@@ -1,5 +1,5 @@
 /**
- * Everything you might want to edit lives in this file: links, price, copy, FAQ, images and the
+ * Everything you might want to edit lives in this file: links, price, copy, FAQ, photos and the
  * Meta Pixel ID. Components read from here, so a change in one place updates the whole site.
  */
 
@@ -7,10 +7,11 @@ export type Img = { src: string; alt: string; width: number; height: number };
 
 export const brand = {
   name: "R. Miller",
+  coach: "coach Miller",
   handle: "@rmillerflow",
   siteUrl: "https://rmillerflow-site.vercel.app",
   tiktokUrl: "https://www.tiktok.com/@rmillerflow",
-  /** The Cal.com event. The calendar on the page and the fallback link both use it. */
+  /** The Cal.com event. Both calendars on the page and the fallback link use it. */
   bookingUrl: "https://cal.com/rokas-miller-ovcrq8/30min",
   /** Same event, written the way the Cal.com embed wants it (no domain). */
   calLink: "rokas-miller-ovcrq8/30min",
@@ -18,19 +19,15 @@ export const brand = {
 };
 
 export const session = {
-  /** Use this name everywhere: on the page, in ads and (ideally) as the Cal.com event title. */
   name: "1-on-1 Fitness & Nutrition Coaching",
-  format: "1-on-1 video call",
   durationMinutes: 30,
   price: 30,
+  priceLabel: "US$30",
   currency: "USD",
-  /**
-   * Shown crossed out next to the price. Only set this if it was a real previous or regular price
-   * (for example 100). Leave it as null otherwise.
-   */
-  previousPrice: null as number | null,
+  format: "One-on-one video call",
   rescheduleHours: 24,
-  trustLine: "30 min · $30 · free rescheduling",
+  details: "30 minutes · US$30 · One-on-one video call",
+  reschedule: "Free rescheduling up to 24 hours before your session.",
 };
 
 /**
@@ -43,221 +40,146 @@ export const meta = {
 
 export const images = {
   avatar: { src: "/images/avatar.jpg", alt: "R. Miller", width: 368, height: 368 } satisfies Img,
-  /**
-   * The large front-facing photo in the hero. Put the file in public/images/ (at least 900px wide,
-   * portrait orientation works best) and fill in its size, for example:
-   * { src: "/images/portrait.jpg", alt: "R. Miller", width: 1200, height: 1500 }
-   * Until then the hero uses the small avatar above.
-   */
-  portrait: { src: "/images/me-portrait.jpg", alt: "R. Miller by the sea", width: 842, height: 1052 } as Img | null,
+  portrait: { src: "/images/me-portrait.jpg", alt: "Coach Miller by the sea", width: 842, height: 1052 } satisfies Img,
 };
 
 export const nav = [
+  { label: "What we'll cover", href: "#cover" },
+  { label: "How it works", href: "#how" },
   { label: "About", href: "#about" },
-  { label: "Approach", href: "#approach" },
-  { label: "How I help", href: "#coaching" },
   { label: "FAQs", href: "#faq" },
 ];
 
+/**
+ * Optional price promotion, shown next to the price in the first screen, the booking drawer and
+ * the booking section. Leave it null unless it is true. The price people pay is always the one set
+ * in Cal.com, so change it there too.
+ *
+ * - "intro": an introductory price with a real end date. Shows "Intro price" and
+ *   "US$60 from 1 January 2027". When the date comes, raise the price in Cal.com and set this back
+ *   to null.
+ * - "sale": a real reduction from a price you have actually charged. Norwegian rules
+ *   (prisopplysningsforskriften § 9a and markedsføringsloven § 7) require the struck-through price
+ *   to be the lowest price you charged in the 30 days before the sale started. A price you never
+ *   charged must not be shown as a "before" price.
+ */
+export type PricePromo =
+  | { kind: "intro"; regularLabel: string; from: string }
+  | { kind: "sale"; wasLabel: string; percentOff: number; until?: string };
+
+export const pricePromo = {
+  kind: "intro",
+  regularLabel: "US$60",
+  from: "1 January 2027",
+} as PricePromo | null;
+
+/** One short line describing the promotion, or null when there is none. */
+export function promoLine(promo: PricePromo | null = pricePromo): string | null {
+  if (!promo) return null;
+  if (promo.kind === "intro") return `Intro price. ${promo.regularLabel} from ${promo.from}.`;
+  return `${promo.percentOff}% off${promo.until ? ` until ${promo.until}` : ""}. Was ${promo.wasLabel}.`;
+}
+
+/** Labels for the booking buttons. Every one of them opens the same Cal.com calendar. */
+export const cta = {
+  primary: "Choose a time",
+  /** The big button on the first screen. */
+  start: "Book your coaching call",
+  startSub: "Choose a time",
+  short: "Book",
+  sticky: "Choose a time · US$30",
+};
+
 export const hero = {
-  hello: "Hey, I'm",
-  intro: "10+ years in nutrition, training and ancestral health.",
-  titleLines: ["Real food.", "Strong body."],
+  kicker: "Meet coach Miller",
+  intro: "10+ years exploring nutrition, training and ancestral health.",
+  title: "Clearer food choices.",
   titleAccent: "A plan that fits your life.",
-  sessionText: "A 30-minute video call where we build a simple plan around your life.",
-  primaryCta: "Book a session",
-  secondaryCta: { label: "See how I can help", href: "#approach" },
-};
-
-export const proof = {
-  title: "As seen on my TikTok",
-  intro: "Real food, simple swaps and everyday habits. This is the kind of thing I post.",
-  /**
-   * Real numbers only, copied from TikTok. Leave the list empty to hide the stats row.
-   * Example: { value: "449K", label: "views on my most-watched video" }
-   */
-  stats: [] as { value: string; label: string }[],
-  /** Shown under the stats, for example "Numbers from October 2026". */
-  statsNote: "",
-  images: [
-    {
-      src: "/images/board-steak.jpg",
-      alt: "Wooden board with steak, berries, pineapple, eggs, raw honey, butter, watermelon and chicken",
-      width: 1080,
-      height: 810,
-      caption: "Animal-based, with fruit",
-    },
-    {
-      src: "/images/board-fish.jpg",
-      alt: "Wooden board with wild-caught fish, bone marrow, ghee, tallow, whole milk and avocado",
-      width: 1080,
-      height: 810,
-      caption: "Fats and fish I cook with",
-    },
-    {
-      src: "/images/board-organs.jpg",
-      alt: "Wooden board with raw heart and liver, Parmigiano Reggiano and homemade ice cream",
-      width: 1080,
-      height: 810,
-      caption: "Organ meats and real treats",
-    },
-  ] as (Img & { caption: string })[],
-  cta: "Follow @rmillerflow on TikTok",
-  /**
-   * Testimonials stay hidden until this list has at least one entry. Only add real quotes from
-   * real clients, with their permission. Example:
-   * { quote: "...", name: "Anna", detail: "Oslo" }
-   */
-  testimonialsTitle: "What people say",
-  testimonials: [] as { quote: string; name: string; detail?: string }[],
-};
-
-export const problem = {
-  title: "You probably don't need more information.",
-  answer: "You need a simpler way forward.",
-  body: "Between conflicting advice, busy schedules, and a hundred different health trends, it's easy to overcomplicate things. Most people don't need another list of rules. They need to know what matters for them, and how to make it stick.",
-  points: [
-    { title: "Too much advice.", text: "You don't know what to follow anymore." },
-    { title: "Not enough consistency.", text: "You start strong, then real life gets in the way." },
-    { title: "No clear direction.", text: "You want results but aren't sure where to focus." },
-    { title: "Everything feels complicated.", text: "Eating and training well shouldn't consume your whole day." },
-  ],
-};
-
-export const approach = {
-  title: "Keep the basics. Lose the noise.",
-  intro: "My approach is built around real food, practical movement, and habits that work in real life.",
-  principles: [
-    {
-      title: "Eat real food",
-      text: "Build meals around satisfying, minimally processed foods, in a way of eating that fits your preferences, needs, and goals.",
-      note: "I lean animal-based and ancestral myself. Your plan is built around you, not around my plate.",
-    },
-    {
-      title: "Get stronger",
-      text: "Find a training direction that fits your schedule, experience, and goals. Consistency matters more than the perfect routine.",
-    },
-    {
-      title: "Make it stick",
-      text: "Build a few meaningful habits you can repeat, even when life gets busy.",
-    },
-  ],
-  statement: ["Simple doesn't mean easy.", "It means you can actually do it."],
-};
-
-export const checkIn = {
-  title: "What's getting in your way?",
-  intro: "Pick the one that sounds most like you.",
-  placeholder: "Pick one and a quick, practical tip shows up here.",
-  disclaimer: "A general tip to get you started, not a personal assessment.",
-  followUpLead: "Want this tailored to you?",
-  followUpCta: "Book a session",
+  text: "A focused 30-minute video call to discuss your routine and choose practical next steps for food, training and everyday habits.",
+  /** The few options under the main button, for visitors who want to know more first. */
+  optionsTitle: "Want to know more first?",
   options: [
+    { label: "What we'll cover", href: "#cover" },
+    { label: "How it works", href: "#how" },
+    { label: "Meet coach Miller", href: "#about" },
+    { label: "FAQs", href: "#faq" },
+  ],
+};
+
+export const leaveWith = {
+  title: "What you'll leave with",
+  intro: "Practical next steps you can start on. Not a promise of specific results.",
+  items: [
     {
-      id: "consistency",
-      label: "I eat pretty well, but can't stay consistent.",
-      title: "Start smaller than you think",
-      tip: "Don't try to overhaul everything on Monday. Start with one meal or routine you can repeat on your busiest day. Build from there.",
+      title: "Clearer priorities for your food choices",
+      text: "Built around real food and what you actually like to eat.",
     },
     {
-      id: "confused",
-      label: "I'm always confused about what to eat.",
-      title: "Begin with a few good meals",
-      tip: "Start with a few balanced meals made from foods you enjoy. You don't need a perfect diet before you can make progress.",
+      title: "A realistic direction for strength training",
+      text: "Matched to your schedule, your experience and the equipment you have.",
     },
     {
-      id: "time",
-      label: "I want to train, but I'm short on time.",
-      title: "Repeatable beats perfect",
-      tip: "You don't need a complicated six-day split. A manageable routine you can repeat consistently is a better starting point.",
+      title: "A small set of repeatable habits",
+      text: "Chosen to fit the schedule you already have.",
+    },
+  ],
+  topicsTitle: "Topics can include",
+  topics: ["Eating", "Training", "Sleep", "Energy", "Digestion", "Goals", "Schedule", "Constraints"],
+};
+
+export const howItWorks = {
+  title: "How the session works",
+  steps: [
+    {
+      title: "Choose a time",
+      text: "Pick a slot that suits you and pay US$30 when you book. Free rescheduling up to 24 hours before.",
     },
     {
-      id: "energy",
-      label: "I just want to feel better and have more energy.",
-      title: "Check the basics first",
-      tip: "Look at the basics first: enough food, regular sleep, hydration, and movement. If fatigue persists, it's worth getting medical advice rather than guessing.",
+      title: "Talk it through",
+      text: "On a 30-minute video call, we go through your current routine, your goals and your constraints, like time and equipment.",
+    },
+    {
+      title: "Leave with next steps",
+      text: "Practical next steps for food, training and everyday habits that fit your life.",
     },
   ],
 };
 
-/** "How I help": coaching, what you leave with, price and the booking calendar, in one section. */
-export const coaching = {
-  title: "Sometimes you just need a clear plan.",
-  intro: "That's where I come in. In one focused 30-minute session, we'll look at where you are, what's been holding you back, and what makes sense for you moving forward.",
-  topicsTitle: "What we can work on",
-  topics: ["Nutrition", "Training", "Sleep", "Energy", "Digestion"],
-  stages: [
-    {
-      title: "Where you're at",
-      text: "We talk about your current routine, eating habits, training, sleep, energy, digestion, and the things you've been struggling with.",
-    },
-    {
-      title: "Where you want to go",
-      text: "We get clear on your goals, priorities, schedule, and what a realistic improvement would look like.",
-    },
-    {
-      title: "Your next steps",
-      text: "We identify practical nutrition, training, and habit changes you can begin working on right away.",
-    },
-  ],
-  leaveTitle: "What you can expect to leave with",
-  leaveWith: [
-    { from: "Guessing what to eat", to: "Clear nutrition priorities based on real food" },
-    { from: "Random workouts", to: "A practical training direction" },
-    { from: "Not sure what's in the way", to: "A better understanding of what's holding you back" },
-    { from: "Starting over every Monday", to: "A few simple habits to start with" },
-    { from: "Too much noise", to: "Less confusion about what to focus on next" },
-  ],
-  note: "It's a focused coaching conversation, not a written multi-week program. One call won't change everything, but it gives you a clear place to start.",
-};
-
-export const booking = {
-  summary: ["30 minutes.", "A clearer direction.", "Practical next steps."],
-  intro: "If you want a bit of guidance and a plan that actually makes sense for your life, let's figure it out together.",
-  reassurance: "One focused session. No complicated commitment.",
-  calendarTitle: "Pick a time",
-  calendarLoading: "Loading available times",
-  calendarFallback: "Calendar not loading? Open it on Cal.com",
-  afterCta: "Free rescheduling up to 24 hours before your session.",
-  age: "Sessions are for adults aged 18 and over.",
-};
-
-/** "Who I am": sits right after the hero, with the two lifestyle photos. */
 export const about = {
   title: "Health should give you more freedom, not less.",
-  intro:
-    "Hey, I'm R. Miller. I've spent over a decade exploring nutrition, training, and ancestral health. What I care about is pretty simple:",
-  values: [
-    {
-      title: "Freedom",
-      text: "Food and training that fit around your life, not the other way around. Room to travel, move and say yes to things.",
-    },
-    {
-      title: "Health",
-      text: "Real food, good sleep and regular movement. The basics, done well and done often.",
-    },
-    {
-      title: "Vitality",
-      text: "Having energy for your whole day, with some left over for the things you enjoy.",
-    },
+  paragraphs: [
+    "Hey, I'm coach Miller. I've spent over a decade exploring nutrition, training and ancestral health, and I share what I learn on TikTok.",
+    "What I care about is freedom, health and vitality: food and training that fit around your life instead of taking it over.",
+    "I look at food through an ancestral, animal-based-informed lens. It's a perspective I bring, not a diet you have to follow.",
   ],
-  closing:
-    "Getting healthier doesn't have to mean following a hundred rules. That's what I share on TikTok, and it's what I help people work through one-on-one.",
-  signoff: "No unnecessary complications. Just a better direction.",
+  tiktokCta: "Follow @rmillerflow on TikTok",
   photos: [
     {
       src: "/images/me-coast.jpg",
-      alt: "R. Miller on a seaside path above the Mediterranean",
+      alt: "Coach Miller on a seaside path above the Mediterranean",
       width: 1160,
       height: 1450,
     },
     {
       src: "/images/me-cliff.jpg",
-      alt: "R. Miller standing on a cliff edge, looking out over the sea",
+      alt: "Coach Miller standing on a cliff edge, looking out over the sea",
       width: 1200,
       height: 1500,
     },
   ] as Img[],
+};
+
+export const booking = {
+  title: "Choose a time",
+  intro: "Pick a time that suits you, add your details and pay US$30 to confirm your session.",
+  drawerTitle: "Choose a time",
+  close: "Close booking",
+  calendarLoading: "Loading available times",
+  calendarFallback: "Calendar not loading? Open it on Cal.com",
+  fine: [
+    "Sessions are for adults aged 18 and over.",
+    "Coaching is general fitness and nutrition education, not medical advice or treatment.",
+  ],
 };
 
 export const faq = {
@@ -265,50 +187,43 @@ export const faq = {
   items: [
     {
       q: "Is this for beginners?",
-      a: "Absolutely. You don't need to have everything figured out before booking. We start with where you are.",
+      a: "Yes. You don't need to have anything figured out before booking. We start with where you are.",
     },
     {
-      q: "Do I need to follow a strict animal-based diet?",
-      a: "No. I'm interested in real-food and animal-based nutrition, but the session is about finding a practical approach for your situation, preferences, and goals.",
+      q: "Do I have to follow an animal-based diet?",
+      a: "No. Ancestral and animal-based nutrition is a lens coach Miller brings, not a diet you have to follow. We work from what suits you, your preferences and your goals.",
     },
     {
       q: "Do I need a gym membership?",
-      a: "Not necessarily. We'll talk about training options that make sense for your schedule and available equipment.",
+      a: "Not necessarily. We'll talk about training options that fit your schedule and the equipment you have.",
     },
     {
-      q: "What if I've tried different diets before?",
-      a: "That's useful context. We can discuss what's worked, what hasn't, and what might make your next approach more sustainable.",
+      q: "What happens after the call?",
+      a: "You leave with the next steps we agreed on. This is a single paid session, and there's no obligation to book anything else.",
     },
-    {
-      q: "Is this a sales call?",
-      a: "No. This is a paid working session focused on your questions and next steps. There is no obligation to purchase additional coaching.",
-    },
-    {
-      q: "How does booking work?",
-      a: "Choose an available time in the calendar on this page (it runs on Cal.com), complete the booking, and follow the confirmation instructions.",
-    },
+    ...(pricePromo?.kind === "intro"
+      ? [
+          {
+            q: "Will the price change?",
+            a: `Yes. ${session.priceLabel} is an introductory price. From ${pricePromo.from} a session will cost ${pricePromo.regularLabel}. You pay the price shown when you book.`,
+          },
+        ]
+      : []),
     {
       q: "Can I reschedule?",
-      a: "Yes, you can reschedule free up to 24 hours before the session.",
+      a: "Yes, free of charge up to 24 hours before your session.",
     },
     {
-      q: "Who can book a session?",
+      q: "Who can book?",
       a: "Anyone aged 18 or over.",
     },
+    {
+      q: "Is this medical advice?",
+      a: "No. Coaching is general fitness and nutrition education, not medical advice or treatment. If you have a medical condition or take medication, check with your doctor first.",
+    },
   ],
-  disclaimer:
-    "Coaching sessions offer general fitness and nutrition education. They are not medical advice, diagnosis, or treatment. If you have a medical condition or take medication, check with your doctor first.",
+  closing: "Ready when you are.",
 };
-
-export const finalCta = {
-  title: "You don't have to figure everything out alone.",
-  text: "A clearer direction might be one conversation away.",
-  cta: "Let's figure it out",
-  soft: "Not ready for a call?",
-  softLink: "Come hang out on TikTok.",
-};
-
-export const stickyCta = "Book a session · $30";
 
 export const footer = {
   statement: "Eat real food. Get stronger. Keep going.",
@@ -333,5 +248,5 @@ export const privacyPage = {
    * While this is null, the page points to TikTok messages instead.
    */
   contactEmail: null as string | null,
-  updated: "19 October 2026",
+  updated: "26 October 2026",
 };

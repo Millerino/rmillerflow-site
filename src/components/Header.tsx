@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { brand, nav } from "@/content/site";
+import { brand, cta, nav } from "@/content/site";
 import { BookLink } from "./BookLink";
-import { ArrowDown, Close, Menu } from "./icons";
+import { Close, Menu } from "./icons";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -55,9 +55,8 @@ export function Header() {
 
         <div className="header__actions">
           <BookLink className="btn btn--small btn--header" source="header">
-            <span className="header__book-long">Book a session</span>
-            <span className="header__book-short">Book</span>
-            <ArrowDown className="btn__icon btn__icon--down" width={16} height={16} />
+            <span className="header__book-long">{cta.primary}</span>
+            <span className="header__book-short">{cta.short}</span>
           </BookLink>
           <button
             ref={buttonRef}

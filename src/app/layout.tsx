@@ -28,7 +28,7 @@ const body = localFont({
 
 const title = "R. Miller | 1-on-1 Fitness & Nutrition Coaching";
 const description =
-  "Simple nutrition, strength training, and habits that stick. 1-on-1 Fitness & Nutrition Coaching with R. Miller: a 30-minute video call, $30, free rescheduling.";
+  "Meet coach Miller. A focused 30-minute video call to choose practical next steps for food, training and everyday habits. US$30, free rescheduling up to 24 hours before.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(brand.siteUrl),

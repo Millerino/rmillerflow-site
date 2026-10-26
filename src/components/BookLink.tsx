@@ -1,6 +1,7 @@
 "use client";
 
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from "react";
+import { openBooking } from "@/lib/booking";
 import { trackBookClick } from "@/lib/tracking";
 
 type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "rel"> & {
@@ -9,10 +10,14 @@ type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "
   source: string;
 };
 
-/** Every "Book" button scrolls to the price and calendar section (#book) and counts the click. */
+/**
+ * Every primary booking button. It opens the booking drawer with the Cal.com calendar straight
+ * away. Without JavaScript (or if the drawer can't open) it is a plain link to the booking section.
+ */
 export function BookLink({ children, source, onClick, ...rest }: Props) {
   function handleClick(e: MouseEvent<HTMLAnchorElement>) {
     trackBookClick(source);
+    if (openBooking(e.currentTarget)) e.preventDefault();
     onClick?.(e);
   }
   return (
